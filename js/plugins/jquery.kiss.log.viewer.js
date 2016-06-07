@@ -11,32 +11,54 @@
     'PWMOutVals' : {min : 1000, max  : 2000},
     'GyroXYZ'    : {min : -2000, max : 2000}
   }
+  var COLORS = [
+    "rgb(255, 255, 0)",
+    "rgb(0, 0, 255)",
+    "rgb(255,102,51)",
+    "rgb(0, 255, 0)",
+    "rgb(204,255,51)",
+    "rgb(128, 40, 255)",
+    "rgb(102,255,51)",
+    "rgb(128, 0, 255)",
+    "rgb(51,204,255)",
+    "rgb(46,184,0)",
+    "rgb(40, 30, 255)",
+    "rgb(204,51,255)",
+    "rgb(255, 0, 0)",
+    "rgb(255, 128, 0)",
+    "rgb(255, 255, 0)",
+    "rgb(255, 0, 0)",
+    "rgb(255, 128, 0)"
+  ];
+
+  var colorIndex = 0;
 
   var CHARTS = {
     'Sticks': {
-      'RXcommands.0' : {name:'Throttle' ,visible: true,  color: "rgb(255, 0, 0)"},
-      'RXcommands.1' : {name:'Roll'     ,visible: true,  color: "rgb(255, 128, 0)"},
-      'RXcommands.2' : {name:'Pitch'    ,visible: true,  color: "rgb(255, 255, 0)"},
-      'RXcommands.3' : {name:'Yaw'      ,visible: true,  color: "rgb(0, 255, 0)"},
-      'RXcommands.4' : {name:'Aux1'     ,visible: false, color: "rgb(0, 0, 255)"},
-      'RXcommands.5' : {name:'Aux2'     ,visible: false, color: "rgb(128, 0, 255)"},
-      'RXcommands.6' : {name:'Aux3'     ,visible: false, color: "rgb(40, 30, 255)"},
-      'RXcommands.7' : {name:'Aux4'     ,visible: false, color: "rgb(128, 40, 255)"}
+      'RXcommands.0' : {name:'Throttle' ,visible: true,  color: COLORS[colorIndex++]},
+      'RXcommands.1' : {name:'Roll'     ,visible: true,  color: COLORS[colorIndex++]},
+      'RXcommands.2' : {name:'Pitch'    ,visible: true,  color: COLORS[colorIndex++]},
+      'RXcommands.3' : {name:'Yaw'      ,visible: true,  color: COLORS[colorIndex++]},
+      'RXcommands.4' : {name:'Aux1'     ,visible: false, color: COLORS[colorIndex++]},
+      'RXcommands.5' : {name:'Aux2'     ,visible: false, color: COLORS[colorIndex++]},
+      'RXcommands.6' : {name:'Aux3'     ,visible: false, color: COLORS[colorIndex++]},
+      'RXcommands.7' : {name:'Aux4'     ,visible: false, color: COLORS[colorIndex++]}
     },
     'Motors':{
-      'PWMOutVals.0':{name:'Motor 1', visible: true,  color: "rgb(102,255,51)"},
-      'PWMOutVals.1':{name:'Motor 2', visible: true,  color: "rgb(51,204,255)"},
-      'PWMOutVals.2':{name:'Motor 3', visible: true,  color: "rgb(204,255,51)"},
-      'PWMOutVals.3':{name:'Motor 4', visible: true,  color: "rgb(46,184,0)"},
-      'PWMOutVals.4':{name:'Motor 5', visible: false, color: "rgb(255,102,51)"},
-      'PWMOutVals.5':{name:'Motor 6', visible: false, color: "rgb(204,51,255)"}
+      'PWMOutVals.0':{name:'Motor 1', visible: true,  color: COLORS[colorIndex++]},
+      'PWMOutVals.1':{name:'Motor 2', visible: true,  color: COLORS[colorIndex++]},
+      'PWMOutVals.2':{name:'Motor 3', visible: true,  color: COLORS[colorIndex++]},
+      'PWMOutVals.3':{name:'Motor 4', visible: true,  color: COLORS[colorIndex++]},
+      'PWMOutVals.4':{name:'Motor 5', visible: false, color: COLORS[colorIndex++]},
+      'PWMOutVals.5':{name:'Motor 6', visible: false, color: COLORS[colorIndex++]}
     },
     'Gyros':{
-      'GyroXYZ.0':{name:'Gyro Roll', visible: true,  color: "rgb(255, 0, 0)"},
-      'GyroXYZ.1':{name:'Gyro Pitch',  visible: true,  color: "rgb(255, 128, 0)"},
-      'GyroXYZ.2':{name:'Gyro Yaw',   visible: true,  color: "rgb(255, 255, 0)"}
+      'GyroXYZ.0':{name:'Gyro Roll', visible: true,   color: COLORS[colorIndex++]},
+      'GyroXYZ.1':{name:'Gyro Pitch',  visible: true, color: COLORS[colorIndex++]},
+      'GyroXYZ.2':{name:'Gyro Yaw',   visible: true,  color: COLORS[colorIndex++]}
     }
   };
+
 	
 	var privateMethods = {
 		build : function(self) {
@@ -128,7 +150,7 @@
     drawTimeline: function(self, startFrame, scale){
       var data = pluginData(self);
       var framesVisible = self.width() * scale;
-      var totalDuration = data.frames.length * FREQUENCY;
+      // var totalDuration = data.frames.length * FREQUENCY;
       var startTime = Math.floor(startFrame * FREQUENCY);
       var secondsVisible = framesVisible*FREQUENCY;
       var context = data.context;
@@ -300,8 +322,23 @@
       var index = checkbox.target.id.split(':')[1];
       CHARTS[index][field].visible = checkbox.target.checked;
       privateMethods.refresh(self);
-    } 
+    },
 
+    applySettings: function(self, settings, friendlyNames){
+      CHARTS = {};
+      var colorIndex = 0;
+      for(var i in settings){
+        CHARTS[settings[i].name] = {}
+        for(var f in settings[i].fields){
+          var fieldName = settings[i].fields[f];
+          //search for a pretty name
+          var friendlyFieldname = typeof(friendlyNames[fieldName]) == 'undefined' ? fieldName : friendlyNames[fieldName];
+          CHARTS[settings[i].name][fieldName] = {name:friendlyFieldname, visible: true,  color: COLORS[colorIndex]}
+          colorIndex = colorIndex > COLORS.length ? 0 : colorIndex + 1;
+        }
+      }
+      privateMethods.refresh(self);
+    }
 	};
 
 	var publicMethods = {
@@ -351,6 +388,10 @@
 				$(document).on("kiss:toggle_values", function(event, checkbox) {
           privateMethods.toggleValues(self, checkbox);
 				});
+
+				$(document).on("kiss:apply_settings", function(event, settings, friendlyNames) {
+          privateMethods.applySettings(self, settings, friendlyNames);
+				});
 			});
 		},
 		destroy : function() {
@@ -387,7 +428,6 @@
 				}
 			}
 			$(document).trigger("kiss:set_frames", [ data.frames ]); // set
-																		// pagers
 			privateMethods.refresh(self);
 		},
 
