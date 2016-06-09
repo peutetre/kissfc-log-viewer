@@ -9,7 +9,8 @@
     'defaults' : {min : 1000, max  : 2000},
     'RXcommands' : {min : 1000, max  : 2000},
     'PWMOutVals' : {min : 1000, max  : 2000},
-    'GyroXYZ'    : {min : -2000, max : 2000}
+    'GyroXYZ'    : {min : -2000, max : 2000},
+    'LiPoVolt'   : {min : 0, max: 26}
   }
   var COLORS = [
     "rgb(255, 255, 0)",
@@ -240,7 +241,7 @@
 			obj.RXcommands[6] = 1500 + ((data.getInt16(i + 12, 0) / 1000) * 500);
 			obj.RXcommands[7] = 1500 + ((data.getInt16(i + 14, 0) / 1000) * 500);
 			obj.Armed = data.getUint8(i + 16);
-			obj.LiPoVolt = data.getInt16(i + 17, 0) / 1000;
+			obj.LiPoVolt = 10*data.getInt16(i + 17, 0) / 1000;
 			obj.GyroXYZ[0] = data.getInt16(i + 19, 0);
 			obj.GyroXYZ[1] = data.getInt16(i + 21, 0);
 			obj.GyroXYZ[2] = data.getInt16(i + 23, 0);
