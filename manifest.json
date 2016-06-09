@@ -1,15 +1,12 @@
 {
     "manifest_version": 2,
     "minimum_chrome_version": "38",
-    "version": “0.1.0”,
-
-    "author": "Alexander Fedorov and Matteo Parmi“,
+    "version": "0.1.0",
+    "author": "Alexander Fedorov and Matteo Parmi",
     "name": "KissFC Log Viewer",
     "short_name": "KissFC Log Viewer",
-    "description": “KissFC Log Viewer”,
-
+    "description": "KissFC Log Viewer",
     "offline_enabled": true,
-
     "app": {
         "background": {
             "scripts": ["eventPage.js"],
@@ -19,7 +16,7 @@
     "permissions": [
         "storage",
         "notifications",
-	"fileSystem"
+        "fileSystem"
     ],
     "icons": {
         "128": "images/icon_128.png"
